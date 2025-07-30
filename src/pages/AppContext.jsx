@@ -13,7 +13,7 @@ export const ContextProvider = ({ children }) => {
   const [config, setConfig] = useState(undefined);
   const [featureManager, setFeatureManager] = useState(undefined);
   const appInsights = new ApplicationInsights({ config: {
-    connectionString: "YOUR-APPINSIGHTS-CONNECTION-STRING"
+    connectionString: "YOUR-APPINSIGHTS-CONNECTION-STRING",
   }});
   appInsights.loadAppInsights();
 
@@ -22,11 +22,12 @@ export const ContextProvider = ({ children }) => {
       const appConfig = await loadFromAzureFrontDoor(
         "YOUR-AZURE-FRONT-DOOR-ENDPOINT",
         {
+          refreshOptions: {
+            enabled: true,
+            refreshIntervalInMs: 10_000
+          },
           featureFlagOptions: {
             enabled: true,
-            selectors: [{
-                keyFilter: "*"
-            }],
             refresh: {
               enabled: true,
               refreshIntervalInMs: 10_000
@@ -46,15 +47,6 @@ export const ContextProvider = ({ children }) => {
         {onFeatureEvaluated: createTelemetryPublisher(appInsights)}
       );
       setFeatureManager(fm);
-
-      // Refresh the config every 10 seconds
-      setInterval(async () => {
-        try {
-          await appConfig.refresh();
-        } catch (error) {
-          console.error("Failed to refresh config:", error);
-        }
-      }, 10_000);
     };
 
     init();
