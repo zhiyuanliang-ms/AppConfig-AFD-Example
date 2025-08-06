@@ -38,7 +38,7 @@ function Home() {
     init();
   }, [config, featureManager, currentUser, lastRefresh]);
 
-  const handleClick = () => {
+  const handleLike = () => {
     if (!liked) {
       const targetingId = currentUser;
       trackEvent(appInsights, targetingId, { name: "Like" });
@@ -74,7 +74,7 @@ function Home() {
             <footer>— {quotes[currentQuoteIndex].author}</footer>
           </blockquote>
           <div className="heart-container">
-            <button className="heart-button" onClick={handleClick}>
+            <button className="heart-button" onClick={handleLike}>
               {liked ? <FaHeart /> : <FaRegHeart />}
             </button>
           </div>
